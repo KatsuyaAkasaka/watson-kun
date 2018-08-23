@@ -15,7 +15,7 @@ const SocketIO = require('socket.io');
 
 // create a new express server
 const app = express();
-const port = proccess.env.PORT;//appEnv.port;
+const port = process.env.PORT;//appEnv.port;
 const socketIO = SocketIO(app.listen(port));
 let socket = null;
 
