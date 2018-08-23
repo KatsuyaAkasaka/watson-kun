@@ -19,6 +19,6 @@ module.exports = {
     // Pipe the synthesized text to a file.
     textToSpeech.synthesize(synthesizeParams).on('error', error => {
       console.log(error);
-    }).pipe(fs.createWriteStream(`${__dirname}/public/audio.mp3`));
+    }).pipe(fs.createWriteStream(`${__dirname}/tmp/audio.mp3`));
   }
 }
