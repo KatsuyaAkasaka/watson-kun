@@ -5,17 +5,17 @@ const querystring = require('querystring');
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
-const cfenv = require('cfenv');
+// const cfenv = require('cfenv');
 const fs = require('fs');
 const path = require('path');
 const CallAPIs = require('./call_apis');
 const T2S = require('./rest_text_to_speech');
 const SocketIO = require('socket.io');
-const appEnv = cfenv.getAppEnv();
+// const appEnv = cfenv.getAppEnv();
 
 // create a new express server
 const app = express();
-const port = appEnv.port;
+const port = proccess.env.PORT;//appEnv.port;
 const socketIO = SocketIO(app.listen(port));
 let socket = null;
 
