@@ -60,7 +60,7 @@ app.post('/callback', async (req, res) => {
 
 const emitSendFile = socket => {
   if (socket === null) return;
-  const audioFilePath = `${__dirname}/tmp/audio.mp3`;
+  const audioFilePath = `/tmp/audio.mp3`;
   fs.readFile(audioFilePath, (err, data) => {
     console.dir(data);
     socket.emit('sendFile', data);
