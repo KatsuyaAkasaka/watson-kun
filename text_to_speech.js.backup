@@ -1,0 +1,74 @@
+require('dotenv').config();
+const Websocket = require('websocket').client;
+const axios = require('axios');
+
+module.exports = class T2S {
+  constructor() {
+    this.format = 'audio/ogg;codecs=opus';
+    this.token = '';
+    this.audioParts = [];
+    this.finalAudio = null;
+    this.init();
+  }
+
+  async init() {
+    const voice = "ja-JP_EmiVoice";
+    await this.authenticate();
+    this.wsURI = `wss://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?voice=${voice}&watson-token=${this.token}`;
+
+
+    // try {
+    //   this.websocket = new Websocket(this.wsURI);
+    // } catch(err) {
+    //   console.error('WS connection error: ', err);
+    // }
+    this.websocket = new Websocket();
+    this.websocket.onopen = this.onOpen;
+    this.websocket.onclose = this.onClose;
+    this.websocket.onmessage = this.onMessage;
+    this.websocket.onerror = this.onError;
+    this.websocket.connect(this.wsURI);
+  }
+
+  async authenticate() {
+    const response = await axios.get('https://stream.watsonplatform.net/authorization/api/v1/token', {
+      auth: {
+        username: process.env.IBM_T2S_TOKEN,
+        password: process.env.IBM_T2S_SECRET
+      },
+      params: {
+        url: 'https://stream.watsonplatform.net/text-to-speech/api'
+      }
+    });
+    this.token = response.data.token;
+  }
+
+  onOpen(evt) {
+    console.log('Yeah');
+    const message = {
+      text: "Hello world",
+      accept: this.format
+    };
+    // The service currently accepts a single message per WebSocket connection.
+    this.websocket.send(JSON.stringify(message));
+  }
+
+  onMessage(evt) {
+    if (typeof evt.data === 'string') {
+      console.log('Received string message: ', evt.data)
+    } else {
+      console.log('Received ' + evt.data.size + ' binary bytes', evt.data.type);
+      this.audioParts.push(evt.data);
+    }
+  }
+
+  onClose(evt) {
+    console.log('WebSocket closed', evt.code, evt.reason);
+    this.finalAudio = new Blob(this.audioParts, {type: this.format});
+    console.log('final audio: ', this.finalAudio);
+  }
+
+  onError(evt) {
+    console.log('WebSocket error', evt);
+  }
+};
