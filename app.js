@@ -5,17 +5,17 @@ const querystring = require('querystring');
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
-// const cfenv = require('cfenv');
+const cfenv = require('cfenv');
 const fs = require('fs');
 const path = require('path');
 const CallAPIs = require('./call_apis');
 const T2S = require('./rest_text_to_speech');
 const SocketIO = require('socket.io');
-// const appEnv = cfenv.getAppEnv();
+const appEnv = cfenv.getAppEnv();
 
 // create a new express server
 const app = express();
-const port = process.env.PORT;//appEnv.port;
+const port = appEnv.port;//process.env.PORT;
 const socketIO = SocketIO(app.listen(port));
 let socket = null;
 
@@ -49,7 +49,7 @@ app.post('/callback', async (req, res) => {
   const extract = await CallAPIs.mediaWiki(message);
 
   // access to T2S API
-  await T2S.textToSpeech(extract);
+  await T2S.textToSpeech(extract, socket);
   emitSendFile(socket);
 
   // reply to line
@@ -60,9 +60,21 @@ app.post('/callback', async (req, res) => {
 
 const emitSendFile = socket => {
   if (socket === null) return;
-  const audioFilePath = `/tmp/audio.mp3`;
-  fs.readFile(audioFilePath, (err, data) => {
-    console.dir(data);
-    socket.emit('sendFile', data);
-  });
+  const audioFilePath = `https://bigmonkey-watson.mybluemix.net/audio.mp3`;
+  socket.emit('sendFile', audioFilePath);
+
+  // let read = fs.createReadStream(audioFilePath, {buffersize: 10});
+  // console.log(read);
+  // read.on('data', data => {
+  //   console.log("data");
+  //   console.dir(data);
+  //   console.log("err");
+  //   console.dir(err);
+  //   socket.emit('sendFile', data);
+  // });
+
+  // fs.readFile(audioFilePath, (err, data) => {
+  //   console.dir(data);
+  //   socket.emit('sendFile', data);
+  // });
 };

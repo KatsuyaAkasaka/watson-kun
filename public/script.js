@@ -11,11 +11,24 @@ $(function(){
                                                // note: on older systems, may have to use deprecated noteOn(time);
   };
 
+  // socket.on('connect', () => {   //サーバがクライアントとの接続を確立すると、クライアントで 'connect' イベントが発生
+  //   console.log("connected");
+  //   socket.on('sendFile', data => {
+  //     console.dir(data);
+  //     context.decodeAudioData(data, playSound, err => { console.log(err); });
+  //   });
+  // });
+
   socket.on('connect', () => {   //サーバがクライアントとの接続を確立すると、クライアントで 'connect' イベントが発生
     console.log("connected");
     socket.on('sendFile', data => {
-      console.dir(data);
-      context.decodeAudioData(data, playSound, err => { console.log(err); });
+      const audioTag = document.createElement('audio');
+      const bodyTag  = document.getElementByTagName('body')[0];
+      audioTag.setAttribute('src', data);
+      audioTag.setAttribute('autoplay');
+      bodyTag.appendChild(audioTag);
     });
   });
+
+
 });

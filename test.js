@@ -49,7 +49,8 @@ app.get('/line', (req, res) => {
 const emitSendFile = (socket) => {
   if (socket === null) return;
   const audioFilePath = `${__dirname}/public/audio.mp3`;
-  fs.readFile(audioFilePath, (err, data) => {
+  let read = fs.createReadStream(audioFilePath, {buffersize: 10});
+  read.on('data', data => {
     socket.emit('sendFile', data);
   });
 };
