@@ -49,8 +49,8 @@ app.post('/callback', async (req, res) => {
   const extract = await CallAPIs.mediaWiki(message);
 
   // access to T2S API
-  await T2S.textToSpeech(extract);
-  emitSendFile(socket);
+  await T2S.textToSpeech(extract, socket);
+  // emitSendFile(socket);
 
   // reply to line
   await CallAPIs.lineMessaging(req.body.events[0].replyToken, extract);
@@ -58,9 +58,14 @@ app.post('/callback', async (req, res) => {
   res.send('OK');
 });
 
+app.get('/line', (req, res) => {
+  emitSendFile(socket);
+  res.send('OK');
+});
+
 const emitSendFile = socket => {
   if (socket === null) return;
-  const audioFilePath = `/tmp/audio.mp3`;
+  const audioFilePath = `./public/audio.mp3`;
   fs.readFile(audioFilePath, (err, data) => {
     console.dir(data);
     socket.emit('sendFile', data);
