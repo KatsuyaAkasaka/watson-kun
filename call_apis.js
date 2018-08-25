@@ -19,7 +19,7 @@ module.exports = {
     });
 
     const extract = Object.keys(wikiRes.data.query.pages).map(value => {
-      return wikiRes.data.query.pages[value].extract || `わかんない`;
+      return wikiRes.data.query.pages[value].extract || `うんちょこちょこちょこぴー`;
     })[0];
 
     return extract;
