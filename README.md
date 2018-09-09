@@ -7,9 +7,9 @@ lineBotに単語を投げるとその説明(wikiAPI)をスピーカーでつな�
 
 ## Lang, Tech etc
 - 言語
-      - Node.js
+-     Node.js
 - API
-      - wikimedia API
+-     wikimedia API
       - Line Messaging API
       - IBM Text To Speech
 - サーバ
